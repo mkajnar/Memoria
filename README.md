@@ -1,5 +1,7 @@
 # Memoria
 
+English | [Česky](README-CZ.md)
+
 Persistent, project-local memory for [Claude Code](https://claude.com/claude-code), packaged as a skill.
 
 Claude saves what matters from a session (records with sources, a checkpoint, and the user's own decisions) into plain Markdown files inside your project, and loads them back in the next session. A small deterministic script does all the file work; the model only prepares a proposal.
@@ -208,6 +210,8 @@ python3 -m unittest discover -s tests -v
 
 ```text
 SKILL.md                      the skill: rules for the model
+README.md                     this file
+README-CZ.md                  Czech version
 scripts/memory_store.py       load and save
 tests/test_memory_store.py    unit tests
 docs/memoria-schema.svg|png   the diagram above
