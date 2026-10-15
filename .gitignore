@@ -1,0 +1,7 @@
+sessions/
+__pycache__/
+*.pyc
+*.lock
+*.tmp
+.hitl/
+.grok/

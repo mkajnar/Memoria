@@ -1,0 +1,187 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 1600" width="1280" height="1600" role="img" aria-labelledby="t d">
+<title id="t">Memoria: how it works</title>
+<desc id="d">A Claude Code session calls the memoria skill, which runs memory_store.py. The script saves per-day, per-project Markdown files and a decisions.jsonl log into the sessions folder of the project, and loads them back in three modes.</desc>
+<defs><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#59636e"/></marker></defs>
+<rect x="0" y="0" width="1280" height="1600" rx="18" fill="#ffffff"/>
+<rect x="1" y="1" width="1278" height="1598" rx="17" fill="none" stroke="#d0d7de" stroke-width="2"/>
+<text xml:space="preserve" x="40" y="58" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="32" font-weight="bold" fill="#1f2328" text-anchor="start">Memoria</text>
+<text xml:space="preserve" x="198" y="58" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="normal" fill="#59636e" text-anchor="start">persistent project memory for Claude Code</text>
+<text xml:space="preserve" x="40" y="88" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#59636e" text-anchor="start">One Markdown file per day and project, a decisions log, and a script that refuses to lose data.</text>
+<text xml:space="preserve" x="40" y="140" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" fill="#8c959f" text-anchor="start">1</text>
+<text xml:space="preserve" x="68" y="140" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" fill="#1f2328" text-anchor="start">Overview</text>
+<line x1="40" y1="150" x2="1240" y2="150" stroke="#d8dee4" stroke-width="1"/>
+<rect x="40" y="165" width="255" height="186" rx="10" fill="#ddf4ff" stroke="#54aeff" stroke-width="1.5"/>
+<text xml:space="preserve" x="56" y="192" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#0550ae" text-anchor="start">Claude Code session</text>
+<text xml:space="preserve" x="56" y="219" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#59636e" text-anchor="start">working dir = your project folder</text>
+<text xml:space="preserve" x="56" y="238" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start"></text>
+<text xml:space="preserve" x="56" y="257" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">/memoria save</text>
+<text xml:space="preserve" x="56" y="276" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">/memoria load</text>
+<text xml:space="preserve" x="56" y="295" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">/memoria load &lt;name&gt;</text>
+<text xml:space="preserve" x="56" y="314" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">/memoria load all</text>
+<rect x="355" y="165" width="255" height="186" rx="10" fill="#ddf4ff" stroke="#54aeff" stroke-width="1.5"/>
+<text xml:space="preserve" x="371" y="192" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#0550ae" text-anchor="start">SKILL.md</text>
+<text xml:space="preserve" x="371" y="219" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#59636e" text-anchor="start">rules for the model</text>
+<text xml:space="preserve" x="371" y="238" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start"></text>
+<text xml:space="preserve" x="371" y="257" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">what is worth remembering</text>
+<text xml:space="preserve" x="371" y="276" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">every record has a source</text>
+<text xml:space="preserve" x="371" y="295" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">evidence: explicit_user, observed,</text>
+<text xml:space="preserve" x="371" y="314" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">inferred, assistant_proposal</text>
+<text xml:space="preserve" x="371" y="333" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">no secrets, no invented history</text>
+<rect x="670" y="165" width="255" height="186" rx="10" fill="#fbefff" stroke="#c297ff" stroke-width="1.5"/>
+<text xml:space="preserve" x="686" y="192" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="15" font-weight="bold" fill="#6639ba" text-anchor="start">scripts/memory_store.py</text>
+<text xml:space="preserve" x="686" y="219" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#59636e" text-anchor="start">deterministic, no network</text>
+<text xml:space="preserve" x="686" y="238" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start"></text>
+<text xml:space="preserve" x="686" y="257" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">load   read only</text>
+<text xml:space="preserve" x="686" y="276" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">save   merge + write</text>
+<text xml:space="preserve" x="686" y="295" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">validation, locking, revision</text>
+<text xml:space="preserve" x="686" y="314" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">check, atomic write, read-back</text>
+<rect x="985" y="165" width="255" height="186" rx="10" fill="#dafbe1" stroke="#4ac26b" stroke-width="1.5"/>
+<text xml:space="preserve" x="1001" y="192" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="15" font-weight="bold" fill="#116329" text-anchor="start">&lt;project&gt;/sessions/</text>
+<text xml:space="preserve" x="1001" y="219" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#59636e" text-anchor="start">per day and project name</text>
+<text xml:space="preserve" x="1001" y="238" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start"></text>
+<text xml:space="preserve" x="1001" y="257" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">2026-10-15-memorizace.md</text>
+<text xml:space="preserve" x="1001" y="276" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">2026-10-16-memorizace.md</text>
+<text xml:space="preserve" x="1001" y="295" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12.5" font-weight="normal" fill="#1f2328" text-anchor="start">2026-10-16-ukoly.md</text>
+<rect x="997" y="317" width="231" height="26" rx="7" fill="#fff8c5" stroke="#d4a72c" stroke-width="1.5"/>
+<text xml:space="preserve" x="1009" y="335" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12.5" font-weight="bold" fill="#7d4e00" text-anchor="start">decisions.jsonl</text>
+<text xml:space="preserve" x="1217" y="335" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#7d4e00" text-anchor="end" font-style="italic">always</text>
+<line x1="299" y1="253" x2="351" y2="253" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<text xml:space="preserve" x="325.0" y="245" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#59636e" text-anchor="middle">invokes</text>
+<line x1="614" y1="253" x2="666" y2="253" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<text xml:space="preserve" x="640.0" y="245" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#59636e" text-anchor="middle">runs</text>
+<line x1="929" y1="231" x2="981" y2="231" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<text xml:space="preserve" x="955.0" y="223" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#59636e" text-anchor="middle">save</text>
+<line x1="981" y1="275" x2="929" y2="275" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<text xml:space="preserve" x="955.0" y="293" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#59636e" text-anchor="middle">load</text>
+<text xml:space="preserve" x="40" y="382" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#59636e" text-anchor="start">The store belongs to the project folder, not to the skill: run the script with the project folder as the working directory.</text>
+<text xml:space="preserve" x="40" y="430" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" fill="#8c959f" text-anchor="start">2</text>
+<text xml:space="preserve" x="68" y="430" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" fill="#1f2328" text-anchor="start">save: what happens to a proposal</text>
+<line x1="40" y1="440" x2="1240" y2="440" stroke="#d8dee4" stroke-width="1"/>
+<rect x="40" y="455" width="380" height="150" rx="10" fill="#ddf4ff" stroke="#54aeff" stroke-width="1.5"/>
+<text xml:space="preserve" x="56" y="482" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#0550ae" text-anchor="start">Proposal</text>
+<text xml:space="preserve" x="56" y="511" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">YAML or JSON file with:</text>
+<text xml:space="preserve" x="56" y="529.5" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">records, checkpoint, decisions,</text>
+<text xml:space="preserve" x="56" y="548.0" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">scope + coverage (new day file)</text>
+<text xml:space="preserve" x="56" y="566.5" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">plus --expected-revision</text>
+<text xml:space="preserve" x="56" y="585.0" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#59636e" text-anchor="start">(today_revisions from load, 0 if absent)</text>
+<circle cx="396" cy="479" r="13" fill="#54aeff"/>
+<text xml:space="preserve" x="396" y="484" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">1</text>
+<rect x="450" y="455" width="380" height="150" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
+<text xml:space="preserve" x="466" y="482" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1f2328" text-anchor="start">Pre-checks</text>
+<text xml:space="preserve" x="466" y="511" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">project name is a lowercase slug (not &#x27;all&#x27;)</text>
+<text xml:space="preserve" x="466" y="529.5" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">decisions are [{decision, source}]</text>
+<text xml:space="preserve" x="466" y="548.0" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">decisions.jsonl parses</text>
+<text xml:space="preserve" x="466" y="566.5" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#a40e26" text-anchor="start">any failure: error, nothing written</text>
+<circle cx="806" cy="479" r="13" fill="#6e7781"/>
+<text xml:space="preserve" x="806" y="484" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">2</text>
+<rect x="860" y="455" width="380" height="150" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
+<text xml:space="preserve" x="876" y="482" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1f2328" text-anchor="start">Lock + revision</text>
+<text xml:space="preserve" x="876" y="511" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="normal" fill="#1f2328" text-anchor="start">&lt;date&gt;-&lt;project&gt;.md.lock   (O_EXCL)</text>
+<text xml:space="preserve" x="876" y="529.5" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">expected revision == file revision</text>
+<text xml:space="preserve" x="876" y="548.0" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">else: conflict, run load and retry</text>
+<text xml:space="preserve" x="876" y="566.5" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#a40e26" text-anchor="start">a stale lock is never removed</text>
+<circle cx="1216" cy="479" r="13" fill="#6e7781"/>
+<text xml:space="preserve" x="1216" y="484" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">3</text>
+<rect x="40" y="640" width="380" height="150" rx="10" fill="#fbefff" stroke="#c297ff" stroke-width="1.5"/>
+<text xml:space="preserve" x="56" y="667" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#6639ba" text-anchor="start">Merge</text>
+<text xml:space="preserve" x="56" y="696" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">same id, saved today: update</text>
+<text xml:space="preserve" x="56" y="714.5" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">identical content: nothing changes</text>
+<text xml:space="preserve" x="56" y="733.0" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">id from an earlier day: refused,</text>
+<text xml:space="preserve" x="56" y="751.5" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">  add a record with  supersedes: &lt;id&gt;</text>
+<text xml:space="preserve" x="56" y="770.0" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">datetime bumped only on changed items</text>
+<circle cx="396" cy="664" r="13" fill="#c297ff"/>
+<text xml:space="preserve" x="396" y="669" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">4</text>
+<rect x="450" y="640" width="380" height="150" rx="10" fill="#dafbe1" stroke="#4ac26b" stroke-width="1.5"/>
+<text xml:space="preserve" x="466" y="667" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#116329" text-anchor="start">Write the day file</text>
+<text xml:space="preserve" x="466" y="696" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">temp file in the same folder</text>
+<text xml:space="preserve" x="466" y="714.5" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">round-trip check: parse == intended</text>
+<text xml:space="preserve" x="466" y="733.0" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">atomic replace, then read-back</text>
+<text xml:space="preserve" x="466" y="751.5" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">revision + 1, updated_at = now (UTC)</text>
+<circle cx="806" cy="664" r="13" fill="#4ac26b"/>
+<text xml:space="preserve" x="806" y="669" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">5</text>
+<rect x="860" y="640" width="380" height="150" rx="10" fill="#fff8c5" stroke="#d4a72c" stroke-width="1.5"/>
+<text xml:space="preserve" x="876" y="667" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="15" font-weight="bold" fill="#7d4e00" text-anchor="start">decisions.jsonl</text>
+<text xml:space="preserve" x="876" y="696" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">created on every save, even empty</text>
+<text xml:space="preserve" x="876" y="714.5" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">own lock, exact duplicates skipped</text>
+<text xml:space="preserve" x="876" y="733.0" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">appended, rewritten atomically</text>
+<text xml:space="preserve" x="876" y="751.5" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">a later decision wins over an earlier</text>
+<circle cx="1216" cy="664" r="13" fill="#d4a72c"/>
+<text xml:space="preserve" x="1216" y="669" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">6</text>
+<line x1="423" y1="530" x2="447" y2="530" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<line x1="833" y1="530" x2="857" y2="530" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<path d="M1050.0,608 V622 H230.0 V636" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<line x1="423" y1="715" x2="447" y2="715" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<line x1="833" y1="715" x2="857" y2="715" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<rect x="40" y="808" width="1200" height="50" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
+<text xml:space="preserve" x="56" y="830" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#1f2328" text-anchor="start">Result (JSON on stdout):</text>
+<text xml:space="preserve" x="236" y="830" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">changed, revision, added / updated / unchanged, decisions {added, unchanged}</text>
+<text xml:space="preserve" x="56" y="848" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#59636e" text-anchor="start">A save that changes nothing leaves both files byte-identical. Exit code 1 and  error: ...  on stderr when it refuses.</text>
+<text xml:space="preserve" x="40" y="905" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" fill="#8c959f" text-anchor="start">3</text>
+<text xml:space="preserve" x="68" y="905" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" fill="#1f2328" text-anchor="start">load: three modes</text>
+<line x1="40" y1="915" x2="1240" y2="915" stroke="#d8dee4" stroke-width="1"/>
+<rect x="40" y="930" width="380" height="112" rx="10" fill="#ddf4ff" stroke="#54aeff" stroke-width="1.5"/>
+<text xml:space="preserve" x="56" y="957" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="15" font-weight="bold" fill="#0550ae" text-anchor="start">load</text>
+<text xml:space="preserve" x="56" y="982" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#59636e" text-anchor="start">latest file only</text>
+<text xml:space="preserve" x="56" y="1001" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">the file that was saved last</text>
+<text xml:space="preserve" x="56" y="1020" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">(by save time, not by file name)</text>
+<rect x="450" y="930" width="380" height="112" rx="10" fill="#ddf4ff" stroke="#54aeff" stroke-width="1.5"/>
+<text xml:space="preserve" x="466" y="957" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="15" font-weight="bold" fill="#0550ae" text-anchor="start">load &lt;name&gt;</text>
+<text xml:space="preserve" x="466" y="982" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#59636e" text-anchor="start">one selected file</text>
+<text xml:space="preserve" x="466" y="1001" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">memorizace: newest day of that project</text>
+<text xml:space="preserve" x="466" y="1020" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">2026-10-15-memorizace: exactly that file</text>
+<rect x="860" y="930" width="380" height="112" rx="10" fill="#ddf4ff" stroke="#54aeff" stroke-width="1.5"/>
+<text xml:space="preserve" x="876" y="957" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="15" font-weight="bold" fill="#0550ae" text-anchor="start">load all</text>
+<text xml:space="preserve" x="876" y="982" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#59636e" text-anchor="start">everything, in saved order</text>
+<text xml:space="preserve" x="876" y="1001" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">oldest to newest,</text>
+<text xml:space="preserve" x="876" y="1020" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">one entry per day file</text>
+<rect x="40" y="1060" width="1200" height="96" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
+<text xml:space="preserve" x="56" y="1084" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#1f2328" text-anchor="start">Every load returns</text>
+<text xml:space="preserve" x="190" y="1084" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="13" font-weight="bold" fill="#7d4e00" text-anchor="start">decisions</text>
+<text xml:space="preserve" x="268" y="1084" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">(all of decisions.jsonl)</text>
+<text xml:space="preserve" x="440" y="1084" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="13" font-weight="bold" fill="#6639ba" text-anchor="start">today_revisions</text>
+<text xml:space="preserve" x="568" y="1084" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">(what to pass to save)</text>
+<text xml:space="preserve" x="732" y="1084" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="13" font-weight="bold" fill="#116329" text-anchor="start">files[]</text>
+<text xml:space="preserve" x="798" y="1084" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">(scope, coverage, checkpoint, records)</text>
+<text xml:space="preserve" x="56" y="1108" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#59636e" text-anchor="start">A record replaced by a later one carries  superseded_by.</text>
+<text xml:space="preserve" x="56" y="1130" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#59636e" text-anchor="start">--query keeps matching records only (never decisions) and drops files without a match.   load never writes anything.</text>
+<text xml:space="preserve" x="40" y="1205" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" fill="#8c959f" text-anchor="start">4</text>
+<text xml:space="preserve" x="68" y="1205" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" fill="#1f2328" text-anchor="start">What is stored</text>
+<line x1="40" y1="1215" x2="1240" y2="1215" stroke="#d8dee4" stroke-width="1"/>
+<rect x="40" y="1230" width="640" height="316" rx="10" fill="#dafbe1" stroke="#4ac26b" stroke-width="1.5"/>
+<text xml:space="preserve" x="56" y="1257" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="15" font-weight="bold" fill="#116329" text-anchor="start">sessions/2026-10-15-memorizace.md</text>
+<text xml:space="preserve" x="56" y="1284.0" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="normal" fill="#1f2328" text-anchor="start">---</text>
+<text xml:space="preserve" x="56" y="1301.2" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="normal" fill="#1f2328" text-anchor="start">schema_version: 2</text>
+<text xml:space="preserve" x="56" y="1318.4" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="normal" fill="#1f2328" text-anchor="start">revision: 3                       # +1 on every change</text>
+<text xml:space="preserve" x="56" y="1335.6" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="normal" fill="#1f2328" text-anchor="start">updated_at: &#x27;2026-10-15T09:52:12+00:00&#x27;</text>
+<text xml:space="preserve" x="56" y="1352.8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="normal" fill="#1f2328" text-anchor="start">scope: ...    coverage: ...</text>
+<text xml:space="preserve" x="56" y="1370.0" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="normal" fill="#1f2328" text-anchor="start">---</text>
+<text xml:space="preserve" x="56" y="1387.2" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="normal" fill="#0550ae" text-anchor="start"># memorizace — 2026-10-15</text>
+<text xml:space="preserve" x="56" y="1404.4" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="normal" fill="#0550ae" text-anchor="start">## Checkpoint</text>
+<text xml:space="preserve" x="56" y="1421.6" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="normal" fill="#59636e" text-anchor="start">~~~yaml  goal, state, completed, open_questions, next  ~~~</text>
+<text xml:space="preserve" x="56" y="1438.8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="normal" fill="#0550ae" text-anchor="start">## Records</text>
+<text xml:space="preserve" x="56" y="1456.0" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="normal" fill="#0550ae" text-anchor="start">### Skill is installed globally</text>
+<text xml:space="preserve" x="56" y="1473.2" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="normal" fill="#59636e" text-anchor="start">~~~yaml</text>
+<text xml:space="preserve" x="56" y="1490.4" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="normal" fill="#1f2328" text-anchor="start">id, title, kind, status, evidence, scope,</text>
+<text xml:space="preserve" x="56" y="1507.6" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="normal" fill="#1f2328" text-anchor="start">description, source, [supersedes], datetime</text>
+<text xml:space="preserve" x="56" y="1524.8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="normal" fill="#59636e" text-anchor="start">~~~</text>
+<rect x="710" y="1230" width="530" height="150" rx="10" fill="#fff8c5" stroke="#d4a72c" stroke-width="1.5"/>
+<text xml:space="preserve" x="726" y="1257" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="15" font-weight="bold" fill="#7d4e00" text-anchor="start">sessions/decisions.jsonl</text>
+<text xml:space="preserve" x="726" y="1286" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="normal" fill="#1f2328" text-anchor="start">{&quot;datetime&quot;: &quot;2026-10-15T10:20:00+00:00&quot;,</text>
+<text xml:space="preserve" x="726" y="1303" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="normal" fill="#1f2328" text-anchor="start"> &quot;project&quot;: &quot;memorizace&quot;,</text>
+<text xml:space="preserve" x="726" y="1320" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="normal" fill="#1f2328" text-anchor="start"> &quot;decision&quot;: &quot;The store lives in ./sessions&quot;,</text>
+<text xml:space="preserve" x="726" y="1337" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="normal" fill="#1f2328" text-anchor="start"> &quot;source&quot;: &quot;user message&quot;}</text>
+<text xml:space="preserve" x="726" y="1362" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#59636e" text-anchor="start">one object per line · only the user&#x27;s own decisions</text>
+<rect x="710" y="1396" width="530" height="150" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
+<text xml:space="preserve" x="726" y="1423" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1f2328" text-anchor="start">Guarantees</text>
+<circle cx="732" cy="1444" r="4" fill="#4ac26b"/>
+<text xml:space="preserve" x="746" y="1448" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">identical save: no revision or datetime change</text>
+<circle cx="732" cy="1463" r="4" fill="#4ac26b"/>
+<text xml:space="preserve" x="746" y="1467" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">earlier days are append-only (supersedes)</text>
+<circle cx="732" cy="1482" r="4" fill="#4ac26b"/>
+<text xml:space="preserve" x="746" y="1486" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">corrupt file or unknown schema: refused, kept</text>
+<circle cx="732" cy="1501" r="4" fill="#4ac26b"/>
+<text xml:space="preserve" x="746" y="1505" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">atomic writes, lock files, revision check</text>
+<circle cx="732" cy="1520" r="4" fill="#4ac26b"/>
+<text xml:space="preserve" x="746" y="1524" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#1f2328" text-anchor="start">UTC clock; file date = date part of datetime</text>
+<text xml:space="preserve" x="40" y="1584" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12.5" font-weight="normal" fill="#59636e" text-anchor="start">78 unit tests:  python3 -m unittest discover -s tests -v        requires Python 3.10+ and PyYAML</text>
+</svg>
